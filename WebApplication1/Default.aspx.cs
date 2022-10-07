@@ -27,7 +27,7 @@ namespace WebApplication1
                 {
                     // Only Application Insights is registered as a logger provider
                     builder.AddApplicationInsights(
-                        configureTelemetryConfiguration: (config) => config.ConnectionString = "InstrumentationKey=a0a3c6c1-7b36-487e-93ac-cab2ee6fa811;IngestionEndpoint=https://eastasia-0.in.applicationinsights.azure.com/;LiveEndpoint=https://eastasia.livediagnostics.monitor.azure.com/",
+                        configureTelemetryConfiguration: (config) => config.ConnectionString = "InstrumentationKey=61a88cdc-c36b-43cd-a5ac-763ff563bea4;IngestionEndpoint=https://japaneast-1.in.applicationinsights.azure.com/;LiveEndpoint=https://japaneast.livediagnostics.monitor.azure.com/",
                         configureApplicationInsightsLoggerOptions: (options) => { }
                     );
                 });
