@@ -27,7 +27,7 @@ namespace WebApplication1
                 {
                     // Only Application Insights is registered as a logger provider
                     builder.AddApplicationInsights(
-                        configureTelemetryConfiguration: (config) => config.ConnectionString = "InstrumentationKey=a62126d8-0c61-4cb8-a5b6-0df6d3dc09f2;IngestionEndpoint=https://eastasia-0.in.applicationinsights.azure.com/;LiveEndpoint=https://eastasia.livediagnostics.monitor.azure.com/",
+                        configureTelemetryConfiguration: (config) => config.ConnectionString = "InstrumentationKey=a0a3c6c1-7b36-487e-93ac-cab2ee6fa811;IngestionEndpoint=https://eastasia-0.in.applicationinsights.azure.com/;LiveEndpoint=https://eastasia.livediagnostics.monitor.azure.com/",
                         configureApplicationInsightsLoggerOptions: (options) => { }
                     );
                 });
@@ -35,7 +35,12 @@ namespace WebApplication1
                 IServiceProvider serviceProvider = services.BuildServiceProvider();
                 ILogger<Default> logger = serviceProvider.GetRequiredService<ILogger<Default>>();
 
-                logger.LogInformation("Logger is working...");
+                logger.LogInformation("LogInformation is working...");
+                logger.LogWarning("LogWarning is working...");
+                logger.LogError("LogError is working...");
+                logger.LogCritical("LogCritical is working...");
+                logger.LogTrace("LogTrace is working...");
+                logger.LogDebug("LogDebug is working...");
             }
             finally
             {
