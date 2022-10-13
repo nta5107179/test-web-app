@@ -4,6 +4,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.ApplicationInsights;
 using System;
+using System.IO;
+using System.Net;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace WebApplication1
@@ -48,6 +52,30 @@ namespace WebApplication1
                 // This ensures that even if the application terminates, telemetry is sent to the back end.
                 channel.Flush();
             }
+        }
+
+        private static bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
+        {
+            return true; 
+        }
+        protected void Button2_Click(object sender, EventArgs e)
+        {
+            HttpWebRequest hwr = (HttpWebRequest)WebRequest.Create("https://management.azure.com/subscriptions/eb38af0b-eef2-4638-a776-4374ff5a94a6/resourceGroups/test-resource/providers/Microsoft.Web/sites/test-web-app2022/restart?api-version=2022-03-01");
+            hwr.ProtocolVersion = HttpVersion.Version10;
+            hwr.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(CheckValidationResult);
+            hwr.Method = "POST";
+            hwr.ContentType = "application/json";
+            string str = "";
+            using (WebResponse wr = hwr.GetResponse())
+            {
+                using (StreamReader sr = new StreamReader(wr.GetResponseStream()))
+                {
+                    str = sr.ReadToEnd();
+                }
+                
+            }
+            Response.Write(str);
+            Response.End();
         }
     }
 }
