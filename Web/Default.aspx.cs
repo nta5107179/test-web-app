@@ -94,17 +94,17 @@ namespace Web
             }
             Response.Write(result);
 
-            while (true)
-            {
-                if(token!=string.Empty ||
-                    code != string.Empty ||
-                    message != string.Empty)
-                {
-                    Response.Write(string.Format("token:{0}, code:{1}, message:{2}", token, code, message));
-                    break;
-                }
-                Thread.Sleep(1000);
-            }
+            //while (true)
+            //{
+            //    if(token!=string.Empty ||
+            //        code != string.Empty ||
+            //        message != string.Empty)
+            //    {
+            //        Response.Write(string.Format("token:{0}, code:{1}, message:{2}", token, code, message));
+            //        break;
+            //    }
+            //    Thread.Sleep(1000);
+            //}
 
             //string result = "";
             //string url = "https://management.azure.com/subscriptions/eb38af0b-eef2-4638-a776-4374ff5a94a6/resourceGroups/test-resource/providers/Microsoft.Web/sites/test-web-app2022/restart?api-version=2022-03-01";
