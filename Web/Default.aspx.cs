@@ -75,6 +75,7 @@ namespace Web
             hwr.ProtocolVersion = HttpVersion.Version11;
             hwr.Method = "POST";
             hwr.ContentType = "application/x-www-form-urlencoded";
+            hwr.ContentLength = 0;
             using (WebResponse wr = hwr.GetResponse())
             {
                 using (StreamReader sr = new StreamReader(wr.GetResponseStream()))
