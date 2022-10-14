@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -66,8 +67,33 @@ namespace Web
 
         protected void Button2_Click(object sender, EventArgs e)
         {
-            GetAccessToken();
-            
+            //GetAccessToken();
+
+            string result = "";
+            string url = "https://login.microsoftonline.com/9cca2a7b-316c-45eb-9031-2d19a008d472/oauth2/v2.0/token";
+            HttpWebRequest hwr = WebRequest.CreateHttp(url);
+            hwr.Method = "POST";
+            hwr.ContentType = "application/x-www-form-urlencoded";
+            byte[] data = Encoding.UTF8.GetBytes(string.Join("&", new string[] {
+                "client_id=63e9e717-79f8-4461-b59e-140d224920b3",
+                "scope=3db474b9-6a0c-4840-96ac-1fceb342124f/.default",
+                "client_secret=b83a129c-ac81-4898-96a9-4c2cb468a827",
+                "grant_type=client_credentials",
+            }));
+            hwr.ContentLength = data.Length;
+            using (Stream s = hwr.GetRequestStream())
+            {
+                s.Write(data, 0, data.Length);
+            }
+            using (WebResponse wr = hwr.GetResponse())
+            {
+                using (StreamReader sr = new StreamReader(wr.GetResponseStream()))
+                {
+                    result = sr.ReadToEnd();
+                }
+            }
+            Response.Write(result);
+
             while (true)
             {
                 if(token!=string.Empty ||
