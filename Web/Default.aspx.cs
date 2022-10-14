@@ -71,14 +71,8 @@ namespace Web
             //GetAccessToken();
 
             string result = "";
-            string data = string.Join("&", new string[] {
-                "client_id="+AppSettings.ClientId,
-                "response_type=code",
-                "resource=https%3A%2F%2Fgraph.microsoft.com%2F",
-            });
-            HttpWebRequest hwr = WebRequest.CreateHttp("https://login.microsoftonline.com/" + AppSettings .Authority+ "/oauth2/authorize" + data);
+            HttpWebRequest hwr = WebRequest.CreateHttp("https://login.microsoftonline.com/common/oauth2/authorize");
             hwr.Method = "POST";
-            hwr.ContentType = "application/x-www-form-urlencoded";
             //byte[] data = Encoding.UTF8.GetBytes(string.Join("&", new string[] {
             //    "client_id="+AppSettings.ClientId,
             //    "scope="+AppSettings.Scopes,
