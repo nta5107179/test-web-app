@@ -74,7 +74,7 @@ namespace Web
             HttpWebRequest hwr = WebRequest.CreateHttp(url);
             hwr.Method = "POST";
             hwr.ContentType = "application/x-www-form-urlencoded";
-            byte[] data = Encoding.UTF8.GetBytes(string.Join("&", new string[] {
+            byte[] data = Encoding.ASCII.GetBytes(string.Join("&", new string[] {
                 "client_id="+HttpUtility.HtmlEncode("63e9e717-79f8-4461-b59e-140d224920b3"),
                 "scope="+HttpUtility.HtmlEncode("3db474b9-6a0c-4840-96ac-1fceb342124f/.default"),
                 "client_secret="+HttpUtility.HtmlEncode("b83a129c-ac81-4898-96a9-4c2cb468a827"),
