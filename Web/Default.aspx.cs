@@ -71,22 +71,21 @@ namespace Web
             //GetAccessToken();
 
             string result = "";
-            HttpWebRequest hwr = WebRequest.CreateHttp("https://login.microsoftonline.com/"+ AppSettings .Authority+ "/oauth2/v2.0/token");
-            hwr.ProtocolVersion = HttpVersion.Version11;
+            string data = string.Join("&", new string[] {
+                "client_id="+AppSettings.ClientId,
+                "response_type=code",
+                "resource=https%3A%2F%2Fgraph.microsoft.com%2F",
+            });
+            HttpWebRequest hwr = WebRequest.CreateHttp("https://login.microsoftonline.com/" + AppSettings .Authority+ "/oauth2/authorize" + data);
             hwr.Method = "POST";
             hwr.ContentType = "application/x-www-form-urlencoded";
-            hwr.Host = "login.microsoftonline.com";
-            byte[] data = Encoding.UTF8.GetBytes(string.Join("&", new string[] {
-                "client_id="+AppSettings.ClientId,
-                "scope="+AppSettings.Scopes,
-                "client_secret="+AppSettings.ClientSecret,
-                "grant_type=client_credentials",
-            }));
-            hwr.ContentLength = data.Length;
-            using (Stream s = hwr.GetRequestStream())
-            {
-                s.Write(data, 0, data.Length);
-            }
+            //byte[] data = Encoding.UTF8.GetBytes(string.Join("&", new string[] {
+            //    "client_id="+AppSettings.ClientId,
+            //    "scope="+AppSettings.Scopes,
+            //    "client_secret="+AppSettings.ClientSecret,
+            //    "grant_type=client_credentials",
+            //}));
+            hwr.ContentLength = 0;
             using (WebResponse wr = hwr.GetResponse())
             {
                 using (StreamReader sr = new StreamReader(wr.GetResponseStream()))
