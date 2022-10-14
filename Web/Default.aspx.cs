@@ -68,34 +68,45 @@ namespace Web
 
         protected void Button2_Click(object sender, EventArgs e)
         {
-            //GetAccessToken();
+            GetAccessToken();
 
-            string result = "";
-            HttpWebRequest hwr = WebRequest.CreateHttp("https://login.microsoftonline.com/9cca2a7b-316c-45eb-9031-2d19a008d472/oauth2/v2.0/token?client_id=63e9e717-79f8-4461-b59e-140d224920b3&scope=3db474b9-6a0c-4840-96ac-1fceb342124f/.default&client_secret=b83a129c-ac81-4898-96a9-4c2cb468a827&grant_type=client_credentials");
-            hwr.ProtocolVersion = HttpVersion.Version11;
-            hwr.Method = "POST";
-            hwr.ContentType = "application/x-www-form-urlencoded";
-            hwr.ContentLength = 0;
-            using (WebResponse wr = hwr.GetResponse())
-            {
-                using (StreamReader sr = new StreamReader(wr.GetResponseStream()))
-                {
-                    result = sr.ReadToEnd();
-                }
-            }
-            Response.Write(result);
-
-            //while (true)
+            //string result = "";
+            //HttpWebRequest hwr = WebRequest.CreateHttp("https://login.microsoftonline.com/9cca2a7b-316c-45eb-9031-2d19a008d472/oauth2/v2.0/token");
+            //hwr.ProtocolVersion = HttpVersion.Version11;
+            //hwr.Method = "POST";
+            //hwr.ContentType = "application/x-www-form-urlencoded";
+            //hwr.Host = "login.microsoftonline.com";
+            //byte[] data = Encoding.UTF8.GetBytes(string.Join("&", new string[] {
+            //    "client_id=63e9e717-79f8-4461-b59e-140d224920b3",
+            //    "scope=3db474b9-6a0c-4840-96ac-1fceb342124f/.default",
+            //    "client_secret=b83a129c-ac81-4898-96a9-4c2cb468a827",
+            //    "grant_type=client_credentials",
+            //}));
+            //hwr.ContentLength = data.Length;
+            //using (Stream s = hwr.GetRequestStream())
             //{
-            //    if(token!=string.Empty ||
-            //        code != string.Empty ||
-            //        message != string.Empty)
-            //    {
-            //        Response.Write(string.Format("token:{0}, code:{1}, message:{2}", token, code, message));
-            //        break;
-            //    }
-            //    Thread.Sleep(1000);
+            //    s.Write(data, 0, data.Length);
             //}
+            //using (WebResponse wr = hwr.GetResponse())
+            //{
+            //    using (StreamReader sr = new StreamReader(wr.GetResponseStream()))
+            //    {
+            //        result = sr.ReadToEnd();
+            //    }
+            //}
+            //Response.Write(result);
+
+            while (true)
+            {
+                if (token != string.Empty ||
+                    code != string.Empty ||
+                    message != string.Empty)
+                {
+                    Response.Write(string.Format("token:{0}, code:{1}, message:{2}", token, code, message));
+                    break;
+                }
+                Thread.Sleep(1000);
+            }
 
             //string result = "";
             //string url = "https://management.azure.com/subscriptions/eb38af0b-eef2-4638-a776-4374ff5a94a6/resourceGroups/test-resource/providers/Microsoft.Web/sites/test-web-app2022/restart?api-version=2022-03-01";
@@ -155,9 +166,9 @@ namespace Web
 
     internal class AppSettings
     {
-        internal static string ClientId = "63e9e717-79f8-4461-b59e-140d224920b3";
-        internal static string ClientSecret = "b83a129c-ac81-4898-96a9-4c2cb468a827";
-        internal static string Authority = "9cca2a7b-316c-45eb-9031-2d19a008d472";
+        internal static string ClientId = "b83a129c-ac81-4898-96a9-4c2cb468a827";
+        internal static string ClientSecret = "9cca2a7b-316c-45eb-9031-2d19a008d472";
+        internal static string Authority = "63e9e717-79f8-4461-b59e-140d224920b3";
         internal static string[] Scopes = new string[] { "3db474b9-6a0c-4840-96ac-1fceb342124f/.default" };
     }
 }
