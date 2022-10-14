@@ -71,7 +71,7 @@ namespace Web
             //GetAccessToken();
 
             string result = "";
-            HttpWebRequest hwr = WebRequest.CreateHttp("https://login.microsoftonline.com/common/oauth2/authorize");
+            HttpWebRequest hwr = WebRequest.CreateHttp("https://login.microsoftonline.com/common/oauth2/authorize?" + AppSettings.ClientId);
             hwr.Method = "POST";
             //byte[] data = Encoding.UTF8.GetBytes(string.Join("&", new string[] {
             //    "client_id="+AppSettings.ClientId,
