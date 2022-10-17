@@ -9,10 +9,12 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Script.Serialization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -122,38 +124,74 @@ namespace Web
 
         private async Task GetAccessToken()
         {
-            IPublicClientApplication PublicClientApp;
+            // Build request to acquire managed identities for Azure resources token
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://management.azure.com/");
+            request.Headers["Metadata"] = "true";
+            request.Method = "GET";
 
-            PublicClientApplicationBuilder app = PublicClientApplicationBuilder.Create(AppSettings.ClientId);
-            app = app.WithRedirectUri("https://login.microsoftonline.com/common/oauth2/nativeclient");
-            app = app.WithAuthority(AzureCloudInstance.AzurePublic, AppSettings.TenantId);
-            PublicClientApp = app.Build();
-            //
-            string[] scopes = new string[] { "User.Read" };
-            string password = AppSettings.Password;
-            System.Security.SecureString secpass = new System.Security.SecureString();
+            try
+            {
+                // Call /token endpoint
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
-            foreach (char c in password) secpass.AppendChar(c);
+                // Pipe response Stream to a StreamReader, and extract access token
+                StreamReader streamResponse = new StreamReader(response.GetResponseStream());
+                string stringResponse = streamResponse.ReadToEnd();
+                JavaScriptSerializer j = new JavaScriptSerializer();
+                Dictionary<string, string> list = (Dictionary<string, string>)j.Deserialize(stringResponse, typeof(Dictionary<string, string>));
+                string accessToken = list["access_token"];
+                Response.Write(accessToken);
+            }
+            catch (Exception e)
+            {
+                string errorText = String.Format("{0} \n\n{1}", e.Message, e.InnerException != null ? e.InnerException.Message : "Acquire token failed");
+                Response.Write(errorText);
+            }
 
-            AcquireTokenByUsernamePasswordParameterBuilder builder = PublicClientApp.AcquireTokenByUsernamePassword(scopes, AppSettings.Account, secpass);
-            AuthenticationResult authResult = await builder.ExecuteAsync();
+            //// Initialize MSAL library by using the following code
+            //IConfidentialClientApplication app = ConfidentialClientApplicationBuilder.Create(AppSettings.ClientId)
+            //    .WithClientSecret(AppSettings.ClientSecret)
+            //    .WithAuthority(new Uri(AppSettings.TenantId))
+            //    .Build();
 
-            //textBox1.Text += "Account UserName:" + authResult.Account.Username + "\r\n";
-            //textBox1.Text += "Account Environment:" + authResult.Account.Environment + "\r\n";
-            //textBox1.Text += "Account HomeAccountID:" + authResult.Account.HomeAccountId + "\r\n";
-            //textBox1.Text += "UniqueID:" + authResult.UniqueId + "\r\n";
-            //textBox1.Text += "AccessToken:" + authResult.AccessToken + "\r\n";
+            //// Acquire an access token
+            //AuthenticationResult authertResult = null;
+            //try
+            //{
+            //    authertResult = await app.AcquireTokenForClient(AppSettings.Scopes)
+            //                    .ExecuteAsync();
+            //}
+            //catch (MsalServiceException ex) when (ex.Message.Contains("AADSTS70011"))
+            //{
+            //    // Invalid scope. The scope has to be of the form "https://resourceurl/.default"
+            //    // Mitigation: change the scope to be as expected
+            //    token = string.Empty;
+            //    //code = "500";
+            //    //message = "Scope provided is not supported";
+            //    //return BadRequest(new { error = "500", error_description = "Scope provided is not supported" });
+            //}
+            //catch (MsalServiceException ex)
+            //{
+            //    // general error getting an access token
+            //    token = string.Empty;
+            //    //code = "500";
+            //    //message = "Something went wrong getting an access token for the client API:" + ex.Message;
+            //    //return BadRequest(new { error = "500", error_description = "Something went wrong getting an access token for the client API:" + ex.Message });
+            //}
 
-            token = authResult.AccessToken;
+            //token = authertResult.AccessToken;
+            //code = string.Empty;
+            //message = string.Empty;
         }
     }
 
     internal class AppSettings
     {
-        internal static string ClientId = "b83a129c-ac81-4898-96a9-4c2cb468a827";
-        internal static string ClientSecret = "9cca2a7b-316c-45eb-9031-2d19a008d472";
+        internal static string ClientId = "dbff9c27-9690-46b2-8766-9fb7d1bc34d6";
+        internal static string ClientSecret = "209dfd34-6beb-4699-a786-e1ee2bad47f8";
         internal static string TenantId = "63e9e717-79f8-4461-b59e-140d224920b3";
         internal static string[] Scopes = new string[] { "3db474b9-6a0c-4840-96ac-1fceb342124f/.default" };
+        internal static string RedirectUri = "https://test-web-app2022.azurewebsites.net/";
 
         internal static string Account = "hi20210126@hotmail.com";
         internal static string Password = "1qaZ2wsx3edc";
