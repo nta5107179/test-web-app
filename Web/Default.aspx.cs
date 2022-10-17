@@ -71,7 +71,8 @@ namespace Web
             //GetAccessToken();
 
             string result = "";
-            HttpWebRequest hwr = WebRequest.CreateHttp("https://login.microsoftonline.com/"+ AppSettings.TenantId + "/oauth2/v2.0/token");
+            string url = "https://login.microsoftonline.com/" + AppSettings.TenantId + "/oauth2/v2.0/token";
+            HttpWebRequest hwr = WebRequest.CreateHttp(url);
             hwr.Method = "POST";
             hwr.ContentType = "application/x-www-form-urlencoded";
             byte[] data = Encoding.UTF8.GetBytes(string.Join("&", new string[] {
