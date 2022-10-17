@@ -1,4 +1,5 @@
-﻿using Microsoft.ApplicationInsights.Channel;
+﻿using Azure.Core;
+using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -99,22 +101,29 @@ namespace Web
             string token_type = json["token_type"].ToString();
             Response.Write(token_type + " " + access_token);
 
+            ReStart(token_type, access_token);
+        }
+
+        private void ReStart(string token_type, string access_token)
+        {
             //App Service再起動
-            result = "";
-            url = "https://management.azure.com/subscriptions/"+ AppSettings.SubscriptionId + "/resourceGroups/"+ AppSettings.ResourceGroupName + "/providers/Microsoft.Web/sites/"+ AppSettings.AppName + "/restart?api-version=2022-03-01";
-            hwr = WebRequest.CreateHttp(url);
+            string result = "";
+            string url = "https://management.azure.com/subscriptions/" + AppSettings.SubscriptionId + "/resourceGroups/" + AppSettings.ResourceGroupName + "/providers/Microsoft.Web/sites/" + AppSettings.AppName + "/restart?api-version=2022-03-01";
+            HttpWebRequest hwr = WebRequest.CreateHttp(url);
             hwr.Method = "POST";
             hwr.Headers.Add("Authorization", token_type + " " + access_token);
             hwr.ContentType = "application/json";
             hwr.ContentLength = 0;
-            using (WebResponse wr = hwr.GetResponse())
-            {
-                using (StreamReader sr = new StreamReader(wr.GetResponseStream()))
-                {
-                    result = sr.ReadToEnd();
-                }
-            }
-            Response.Write(result);
+            //using (WebResponse wr = hwr.GetResponse())
+            //{
+            //    using (StreamReader sr = new StreamReader(wr.GetResponseStream()))
+            //    {
+            //        result = sr.ReadToEnd();
+            //    }
+            //}
+            Response.Write(url);
+            Response.Write("<br>");
+            Response.Write(hwr.Headers["Authorization"]);
         }
 
         private async Task GetAccessToken()
