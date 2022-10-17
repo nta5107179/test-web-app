@@ -100,21 +100,21 @@ namespace Web
             Response.Write(token_type + " " + access_token);
 
             //App Service再起動
-            result = "";
-            url = "https://management.azure.com/subscriptions/"+ AppSettings.SubscriptionId + "/resourceGroups/"+ AppSettings.ResourceGroupName + "/providers/Microsoft.Web/sites/"+ AppSettings.AppName + "/restart?api-version=2022-03-01";
-            hwr = WebRequest.CreateHttp(url);
-            hwr.Method = "POST";
-            hwr.Headers.Add("Authorization", token_type + " " + access_token);
-            hwr.ContentType = "application/json";
-            hwr.ContentLength = 0;
-            using (WebResponse wr = hwr.GetResponse())
-            {
-                using (StreamReader sr = new StreamReader(wr.GetResponseStream()))
-                {
-                    result = sr.ReadToEnd();
-                }
-            }
-            Response.Write(result);
+            //result = "";
+            //url = "https://management.azure.com/subscriptions/"+ AppSettings.SubscriptionId + "/resourceGroups/"+ AppSettings.ResourceGroupName + "/providers/Microsoft.Web/sites/"+ AppSettings.AppName + "/restart?api-version=2022-03-01";
+            //hwr = WebRequest.CreateHttp(url);
+            //hwr.Method = "POST";
+            //hwr.Headers.Add("Authorization", token_type + " " + access_token);
+            //hwr.ContentType = "application/json";
+            //hwr.ContentLength = 0;
+            //using (WebResponse wr = hwr.GetResponse())
+            //{
+            //    using (StreamReader sr = new StreamReader(wr.GetResponseStream()))
+            //    {
+            //        result = sr.ReadToEnd();
+            //    }
+            //}
+            //Response.Write(result);
         }
 
         private async Task GetAccessToken()
