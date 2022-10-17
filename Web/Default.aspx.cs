@@ -77,10 +77,9 @@ namespace Web
             hwr.ContentType = "application/x-www-form-urlencoded";
             byte[] data = Encoding.UTF8.GetBytes(string.Join("&", new string[] {
                 "client_id="+AppSettings.ClientId,
-                "scope=user.read%20openid%20profile%20offline_access",
-                "username=" + AppSettings.Account,
-                "password=" + AppSettings.Password,
-                "grant_type=password"
+                "client_secret="+AppSettings.ClientSecret,
+                "scope="+AppSettings.Scopes,
+                "grant_type=client_credentials"
             }));
             hwr.ContentLength = data.Length;
             using (Stream s = hwr.GetRequestStream())
@@ -127,29 +126,6 @@ namespace Web
 
         private async Task GetAccessToken()
         {
-            // Build request to acquire managed identities for Azure resources token
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://management.azure.com/");
-            request.Headers["Metadata"] = "true";
-            request.Method = "GET";
-
-            try
-            {
-                // Call /token endpoint
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-                // Pipe response Stream to a StreamReader, and extract access token
-                StreamReader streamResponse = new StreamReader(response.GetResponseStream());
-                string stringResponse = streamResponse.ReadToEnd();
-                JavaScriptSerializer j = new JavaScriptSerializer();
-                Dictionary<string, string> list = (Dictionary<string, string>)j.Deserialize(stringResponse, typeof(Dictionary<string, string>));
-                string accessToken = list["access_token"];
-                Response.Write(accessToken);
-            }
-            catch (Exception e)
-            {
-                string errorText = String.Format("{0} \n\n{1}", e.Message, e.InnerException != null ? e.InnerException.Message : "Acquire token failed");
-                Response.Write(errorText);
-            }
 
             //// Initialize MSAL library by using the following code
             //IConfidentialClientApplication app = ConfidentialClientApplicationBuilder.Create(AppSettings.ClientId)
@@ -190,10 +166,10 @@ namespace Web
 
     internal class AppSettings
     {
-        internal static string ClientId = "b83a129c-ac81-4898-96a9-4c2cb468a827";
-        internal static string ClientSecret = "209dfd34-6beb-4699-a786-e1ee2bad47f8";
+        internal static string ClientId = "c739c898-f8ca-4428-95a8-94a4ef74bb8f";
+        internal static string ClientSecret = "up48Q~QemMWRwnfwTQg-X0_9P4H1AxRZJlTQAaPG";
         internal static string TenantId = "63e9e717-79f8-4461-b59e-140d224920b3";
-        internal static string[] Scopes = new string[] { "3db474b9-6a0c-4840-96ac-1fceb342124f/.default" };
+        internal static string Scopes = "api://c739c898-f8ca-4428-95a8-94a4ef74bb8f/.default";
         internal static string RedirectUri = "https://test-web-app2022.azurewebsites.net/";
 
         internal static string Account = "hi20210126@hotmail.com";
