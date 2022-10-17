@@ -189,7 +189,7 @@ namespace Web
 
     internal class AppSettings
     {
-        internal static string ClientId = "dbff9c27-9690-46b2-8766-9fb7d1bc34d6";
+        internal static string ClientId = "b83a129c-ac81-4898-96a9-4c2cb468a827";
         internal static string ClientSecret = "209dfd34-6beb-4699-a786-e1ee2bad47f8";
         internal static string TenantId = "63e9e717-79f8-4461-b59e-140d224920b3";
         internal static string[] Scopes = new string[] { "3db474b9-6a0c-4840-96ac-1fceb342124f/.default" };
