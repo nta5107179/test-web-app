@@ -68,41 +68,43 @@ namespace Web
 
         protected void Button2_Click(object sender, EventArgs e)
         {
-            GetAccessToken();
+            //GetAccessToken();
 
-            //string result = "";
-            //HttpWebRequest hwr = WebRequest.CreateHttp("https://login.microsoftonline.com/" + AppSettings .Authority+ "/oauth2/authorize");
-            //hwr.Method = "POST";
-            //hwr.ContentType = "application/x-www-form-urlencoded";
-            //byte[] data = Encoding.UTF8.GetBytes(string.Join("&", new string[] {
-            //    "client_id="+AppSettings.ClientId,
-            //    "response_type=code",
-            //    "resource=https%3A%2F%2Fgraph.microsoft.com%2F",
-            //    "redirect_uri=https%3A%2F%2Ftest-web-app2022.azurewebsites.net%2F",
-            //}));
-            //hwr.ContentLength = data.Length;
-            //using (Stream s = hwr.GetRequestStream())
-            //{
-            //    s.Write(data, 0, data.Length);
-            //}
-            //using (WebResponse wr = hwr.GetResponse())
-            //{
-            //    using (StreamReader sr = new StreamReader(wr.GetResponseStream()))
-            //    {
-            //        result = sr.ReadToEnd();
-            //    }
-            //}
-            //Response.Write(result);
-
-            while (true)
+            string result = "";
+            HttpWebRequest hwr = WebRequest.CreateHttp("https://login.microsoftonline.com/"+ AppSettings.TenantId + "/oauth2/v2.0/token");
+            hwr.Method = "POST";
+            hwr.ContentType = "application/x-www-form-urlencoded";
+            byte[] data = Encoding.UTF8.GetBytes(string.Join("&", new string[] {
+                "client_id="+AppSettings.ClientId,
+                "scope=user.read%20openid%20profile%20offline_access",
+                "username=" + AppSettings.Account,
+                "password=" + AppSettings.Password,
+                "grant_type=password"
+            }));
+            hwr.ContentLength = data.Length;
+            using (Stream s = hwr.GetRequestStream())
             {
-                if (token != string.Empty)
-                {
-                    Response.Write(string.Format("token:{0}", token));
-                    break;
-                }
-                Thread.Sleep(1000);
+                s.Write(data, 0, data.Length);
             }
+            using (WebResponse wr = hwr.GetResponse())
+            {
+                using (StreamReader sr = new StreamReader(wr.GetResponseStream()))
+                {
+                    result = sr.ReadToEnd();
+                }
+            }
+            Response.Write(result);
+
+            //while (true)
+            //{
+            //    if (token != string.Empty)
+            //    {
+            //        Response.Write(string.Format("token:{0}", token));
+            //        break;
+            //    }
+            //    Thread.Sleep(1000);
+            //}
+
 
             //App Service再起動
             //string result = "";
