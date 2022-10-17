@@ -21,8 +21,6 @@ namespace Web
     public partial class Default : System.Web.UI.Page
     {
         string token = string.Empty;
-        string code = string.Empty;
-        string message = string.Empty;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -68,50 +66,43 @@ namespace Web
 
         protected void Button2_Click(object sender, EventArgs e)
         {
-            //GetAccessToken();
+            GetAccessToken();
 
-            string result = "";
-            //string data = string.Join("&", new string[] {
+            //string result = "";
+            //HttpWebRequest hwr = WebRequest.CreateHttp("https://login.microsoftonline.com/" + AppSettings .Authority+ "/oauth2/authorize");
+            //hwr.Method = "POST";
+            //hwr.ContentType = "application/x-www-form-urlencoded";
+            //byte[] data = Encoding.UTF8.GetBytes(string.Join("&", new string[] {
             //    "client_id="+AppSettings.ClientId,
             //    "response_type=code",
             //    "resource=https%3A%2F%2Fgraph.microsoft.com%2F",
             //    "redirect_uri=https%3A%2F%2Ftest-web-app2022.azurewebsites.net%2F",
-            //});
-            HttpWebRequest hwr = WebRequest.CreateHttp("https://login.microsoftonline.com/" + AppSettings .Authority+ "/oauth2/authorize");
-            hwr.Method = "POST";
-            hwr.ContentType = "application/x-www-form-urlencoded";
-            byte[] data = Encoding.UTF8.GetBytes(string.Join("&", new string[] {
-                "client_id="+AppSettings.ClientId,
-                "response_type=code",
-                "resource=https%3A%2F%2Fgraph.microsoft.com%2F",
-                "redirect_uri=https%3A%2F%2Ftest-web-app2022.azurewebsites.net%2F",
-            }));
-            hwr.ContentLength = data.Length;
-            using (Stream s = hwr.GetRequestStream())
-            {
-                s.Write(data, 0, data.Length);
-            }
-            using (WebResponse wr = hwr.GetResponse())
-            {
-                using (StreamReader sr = new StreamReader(wr.GetResponseStream()))
-                {
-                    result = sr.ReadToEnd();
-                }
-            }
-            Response.Write(result);
-
-            //while (true)
+            //}));
+            //hwr.ContentLength = data.Length;
+            //using (Stream s = hwr.GetRequestStream())
             //{
-            //    if (token != string.Empty ||
-            //        code != string.Empty ||
-            //        message != string.Empty)
-            //    {
-            //        Response.Write(string.Format("token:{0}, code:{1}, message:{2}", token, code, message));
-            //        break;
-            //    }
-            //    Thread.Sleep(1000);
+            //    s.Write(data, 0, data.Length);
             //}
+            //using (WebResponse wr = hwr.GetResponse())
+            //{
+            //    using (StreamReader sr = new StreamReader(wr.GetResponseStream()))
+            //    {
+            //        result = sr.ReadToEnd();
+            //    }
+            //}
+            //Response.Write(result);
 
+            while (true)
+            {
+                if (token != string.Empty)
+                {
+                    Response.Write(string.Format("token:{0}", token));
+                    break;
+                }
+                Thread.Sleep(1000);
+            }
+
+            //App Service再起動
             //string result = "";
             //string url = "https://management.azure.com/subscriptions/eb38af0b-eef2-4638-a776-4374ff5a94a6/resourceGroups/test-resource/providers/Microsoft.Web/sites/test-web-app2022/restart?api-version=2022-03-01";
             //HttpWebRequest hwr = WebRequest.CreateHttp(url);
@@ -131,40 +122,29 @@ namespace Web
 
         private async Task GetAccessToken()
         {
-            // Initialize MSAL library by using the following code
-            IConfidentialClientApplication app = ConfidentialClientApplicationBuilder.Create(AppSettings.ClientId)
-                .WithClientSecret(AppSettings.ClientSecret)
-                .WithAuthority(new Uri(AppSettings.Authority))
-                .Build();
+            IPublicClientApplication PublicClientApp;
 
-            // Acquire an access token
-            AuthenticationResult authertResult = null;
-            try
-            {
-                authertResult = await app.AcquireTokenForClient(AppSettings.Scopes)
-                                .ExecuteAsync();
-            }
-            catch (MsalServiceException ex) when (ex.Message.Contains("AADSTS70011"))
-            {
-                // Invalid scope. The scope has to be of the form "https://resourceurl/.default"
-                // Mitigation: change the scope to be as expected
-                token = string.Empty;
-                code = "500";
-                message = "Scope provided is not supported";
-                //return BadRequest(new { error = "500", error_description = "Scope provided is not supported" });
-            }
-            catch (MsalServiceException ex)
-            {
-                // general error getting an access token
-                token = string.Empty;
-                code = "500";
-                message = "Something went wrong getting an access token for the client API:" + ex.Message;
-                //return BadRequest(new { error = "500", error_description = "Something went wrong getting an access token for the client API:" + ex.Message });
-            }
+            PublicClientApplicationBuilder app = PublicClientApplicationBuilder.Create(AppSettings.ClientId);
+            app = app.WithRedirectUri("https://login.microsoftonline.com/common/oauth2/nativeclient");
+            app = app.WithAuthority(AzureCloudInstance.AzurePublic, AppSettings.TenantId);
+            PublicClientApp = app.Build();
+            //
+            string[] scopes = new string[] { "User.Read" };
+            string password = AppSettings.Password;
+            System.Security.SecureString secpass = new System.Security.SecureString();
 
-            token = authertResult.AccessToken;
-            code = string.Empty;
-            message = string.Empty;
+            foreach (char c in password) secpass.AppendChar(c);
+
+            AcquireTokenByUsernamePasswordParameterBuilder builder = PublicClientApp.AcquireTokenByUsernamePassword(scopes, AppSettings.Account, secpass);
+            AuthenticationResult authResult = await builder.ExecuteAsync();
+
+            //textBox1.Text += "Account UserName:" + authResult.Account.Username + "\r\n";
+            //textBox1.Text += "Account Environment:" + authResult.Account.Environment + "\r\n";
+            //textBox1.Text += "Account HomeAccountID:" + authResult.Account.HomeAccountId + "\r\n";
+            //textBox1.Text += "UniqueID:" + authResult.UniqueId + "\r\n";
+            //textBox1.Text += "AccessToken:" + authResult.AccessToken + "\r\n";
+
+            token = authResult.AccessToken;
         }
     }
 
@@ -172,7 +152,10 @@ namespace Web
     {
         internal static string ClientId = "b83a129c-ac81-4898-96a9-4c2cb468a827";
         internal static string ClientSecret = "9cca2a7b-316c-45eb-9031-2d19a008d472";
-        internal static string Authority = "63e9e717-79f8-4461-b59e-140d224920b3";
+        internal static string TenantId = "63e9e717-79f8-4461-b59e-140d224920b3";
         internal static string[] Scopes = new string[] { "3db474b9-6a0c-4840-96ac-1fceb342124f/.default" };
+
+        internal static string Account = "hi20210126@hotmail.com";
+        internal static string Password = "1qaZ2wsx3edc";
     }
 }
