@@ -101,7 +101,7 @@ namespace Web
 
             //App Service再起動
             result = "";
-            url = "https://management.azure.com/subscriptions/eb38af0b-eef2-4638-a776-4374ff5a94a6/resourceGroups/test-resource/providers/Microsoft.Web/sites/test-web-app2022/restart?api-version=2022-03-01";
+            url = "https://management.azure.com/subscriptions/"+ AppSettings.SubscriptionId + "/resourceGroups/"+ AppSettings.ResourceGroupName + "/providers/Microsoft.Web/sites/"+ AppSettings.AppName + "/restart?api-version=2022-03-01";
             hwr = WebRequest.CreateHttp(url);
             hwr.Method = "POST";
             hwr.Headers.Add("Authorization", token_type + " " + access_token);
@@ -159,6 +159,9 @@ namespace Web
 
     internal class AppSettings
     {
+        internal static string AppName = "test-web-app2022";
+        internal static string ResourceGroupName = "test-resource";
+        internal static string SubscriptionId = "eb38af0b-eef2-4638-a776-4374ff5a94a6";
         internal static string ClientId = "c739c898-f8ca-4428-95a8-94a4ef74bb8f";
         internal static string ClientSecret = "up48Q~QemMWRwnfwTQg-X0_9P4H1AxRZJlTQAaPG";
         internal static string TenantId = "63e9e717-79f8-4461-b59e-140d224920b3";
