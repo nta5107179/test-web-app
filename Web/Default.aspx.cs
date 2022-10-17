@@ -23,8 +23,6 @@ namespace Web
 {
     public partial class Default : System.Web.UI.Page
     {
-        string token = string.Empty;
-
         protected void Page_Load(object sender, EventArgs e)
         {
 
@@ -96,15 +94,17 @@ namespace Web
                 }
             }
             //Response.Write(result);
-            string token = JObject.Parse(result)["access_token"].ToString();
-            Response.Write(token);
+            JObject json = JObject.Parse(result);
+            string access_token = json["access_token"].ToString();
+            string token_type = json["token_type"].ToString();
+            Response.Write(token_type + " " + access_token);
 
             //App Service再起動
             result = "";
             url = "https://management.azure.com/subscriptions/eb38af0b-eef2-4638-a776-4374ff5a94a6/resourceGroups/test-resource/providers/Microsoft.Web/sites/test-web-app2022/restart?api-version=2022-03-01";
             hwr = WebRequest.CreateHttp(url);
             hwr.Method = "POST";
-            hwr.Headers.Add("Authorization", "Bearer " + token);
+            hwr.Headers.Add("Authorization", token_type + " " + access_token);
             hwr.ContentType = "application/json";
             hwr.ContentLength = 0;
             using (WebResponse wr = hwr.GetResponse())
