@@ -164,6 +164,34 @@ namespace Web
             //code = string.Empty;
             //message = string.Empty;
         }
+
+        protected void Button3_Click(object sender, EventArgs e)
+        {
+            string result = "";
+            string url = "https://login.microsoftonline.com/" + AppSettings.TenantId + "/oauth2/v2.0/token";
+            HttpWebRequest hwr = WebRequest.CreateHttp(url);
+            hwr.Method = "POST";
+            hwr.ContentType = "application/x-www-form-urlencoded";
+            byte[] data = Encoding.UTF8.GetBytes(string.Join("&", new string[] {
+                "username="+AppSettings.Account,
+                "password="+AppSettings.Password,
+                "scope="+AppSettings.Scopes,
+                "grant_type=password"
+            }));
+            hwr.ContentLength = data.Length;
+            using (Stream s = hwr.GetRequestStream())
+            {
+                s.Write(data, 0, data.Length);
+            }
+            using (WebResponse wr = hwr.GetResponse())
+            {
+                using (StreamReader sr = new StreamReader(wr.GetResponseStream()))
+                {
+                    result = sr.ReadToEnd();
+                }
+            }
+            Response.Write(result);
+        }
     }
 
     internal class AppSettings

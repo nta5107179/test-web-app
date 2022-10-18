@@ -12,6 +12,7 @@
         <div>
             <asp:Button ID="Button1" runat="server" Text="Application Insightsログ出力試験" OnClick="Button1_Click" />
             <asp:Button ID="Button2" runat="server" Text="App Service再起動試験" OnClick="Button2_Click" />
+            <asp:Button ID="Button3" runat="server" Text="App Service再起動試験2" OnClick="Button3_Click" />
         </div>
     </form>
 </body>
